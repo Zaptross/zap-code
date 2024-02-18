@@ -1,0 +1,67 @@
+@startuml system-design
+
+' Theme and style configuration
+title System Design
+!theme cyborg-outline
+skinparam backgroundColor #000000
+
+<style>
+.java {
+  LineColor #ef5350
+}
+.python {
+  LineColor #306998
+  LineThickness 5
+}
+.rabbitmq {
+  LineColor #f89820
+}
+</style>
+
+rectangle Public {
+  rectangle "React Frontend" as fe {
+    component "Code Editor"
+  }
+}
+
+rectangle "Public Access" as pvpc {
+  node "Event Streamer" as sse << java >> {
+    label "Java"
+  }
+
+  node "REST API" as api << java >> {
+    label "Java"
+  }
+}
+
+rectangle vpc {
+  hexagon "Job Processor" as jp << python >>
+
+  queue "Job Queue" as jq << rabbitmq >>
+
+  queue "Event Stream" as events << rabbitmq >>
+
+  database "MongoDB Database" as db
+}
+
+' layout configuration lines
+Public -[hidden]d-> pvpc
+pvpc -[hidden]d-> vpc
+jq -[hidden]r-> events
+jq -[hidden]d-> db
+events -[hidden]d-> db
+jq -[hidden]d-> jp
+events -[hidden]d-> jp
+jp -[hidden]r-> db
+
+' visible notation lines
+fe <--> api : REST API (GET, POST, PUT, DELETE)
+sse --> fe : Server Sent Events (GET)
+events --> sse : Dispatch events
+api --> jq : Publish job
+api <--> db : read/write
+jq --> jp : Consume job
+jp --> events : Notify job completion
+jp <--> db : read jobs, write results
+
+@enduml

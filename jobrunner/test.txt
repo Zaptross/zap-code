@@ -1,0 +1,5 @@
+def sum(x: int, y: int):
+  return x + y
+
+print("exec")
+print("exec sum: %s" % sum(1, 1))

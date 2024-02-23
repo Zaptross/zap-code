@@ -1,6 +1,8 @@
 .env
 values.yaml
 
+.vscode/launch.json
+
 # Ignore Gradle project-specific cache directory
 .gradle
 

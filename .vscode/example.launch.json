@@ -8,21 +8,24 @@
       "type": "java",
       "name": "java:current-file",
       "request": "launch",
-      "mainClass": "${file}"
+      "mainClass": "${file}",
+      "preLaunchTask": "java:build"
     },
     {
       "type": "java",
       "name": "java:api",
       "request": "launch",
       "mainClass": "api.App",
-      "projectName": "api"
+      "projectName": "api",
+      "preLaunchTask": "java:build"
     },
     {
       "type": "java",
       "name": "java:events",
       "request": "launch",
       "mainClass": "events.App",
-      "projectName": "events"
+      "projectName": "events",
+      "preLaunchTask": "java:build"
     }
   ],
   "compounds": [
@@ -31,7 +34,8 @@
       "configurations": [
         "java:api",
         "java:events"
-      ]
+      ],
+      "preLaunchTask": "java:build"
     }
   ]
 }

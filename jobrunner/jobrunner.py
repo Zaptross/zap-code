@@ -1,5 +1,22 @@
+from dotenv import load_dotenv
+from pymongo import MongoClient
+
 from transport.transport import ConsoleTransport
 from runner.tester import Tester
+from database.config import MongoConfig
+from database.user import User
+
+load_dotenv()
+
+mongoConfig = MongoConfig().fromEnvGroup("database")
+
+client = MongoClient(mongoConfig.toConnectionString())
+db = client.get_database("zapcode")
+col = db.get_collection("users")
+user = col.find_one({ "email": "test@testing.testing"})
+print(user)
+user = User.fromDict(user)
+print(user, user.id, user.email, user.auth_provider)
 
 def withTestingContext(impl: str, tests: str):
   with open("./runner/tester.py", "r") as f:

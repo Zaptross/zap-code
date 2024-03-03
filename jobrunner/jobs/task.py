@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Callable
 from bson.objectid import ObjectId
 from database.job import Job
+from database.logs import Logs
 from database.job_status import JobStatus
 
 class Task(ABC):
@@ -27,3 +28,7 @@ class Task(ABC):
 
   def solutionReplacementTarget(self) -> str:
     return "# SOLUTION_INSERTION_TARGET #"
+  
+  @abstractmethod
+  def get_logs(self) -> Logs:
+    pass

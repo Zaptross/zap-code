@@ -3,13 +3,12 @@ from pymongo import MongoClient
 from time import sleep
 
 from database.config import MongoConfig
-from database.user import User
-from database.job import Job
-from jobs.get_tasks import get_task
 from database.job_status import JobStatus
+from database.write_logs import write_logs
+from jobs.task import Task
+from jobs.get_tasks import get_task
 from jobprovider.database_job_provider import DatabaseJobProvider
 from transport.console import ConsoleTransport
-from jobs.task import Task
 
 load_dotenv()
 
@@ -20,6 +19,7 @@ db = client.get_database("zapcode")
 
 jp = DatabaseJobProvider(db)
 cl = ConsoleTransport()
+logs = db.get_collection("logs")
 
 while True:
   job = jp.next()
@@ -43,4 +43,5 @@ while True:
     continue
 
   status = task.run(jp.on_complete)
+  write_logs(logs, task.get_logs())
   cl.write("Job %s completed as %s" % (job.id, status.name))

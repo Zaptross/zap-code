@@ -1,10 +1,11 @@
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
-from transport.transport import ConsoleTransport
-from runner.tester import Tester
 from database.config import MongoConfig
 from database.user import User
+from database.job import Job
+from jobs.get_tasks import get_task
+from database.job_status import JobStatus
 
 load_dotenv()
 
@@ -18,29 +19,20 @@ print(user)
 user = User.fromDict(user)
 print(user, user.id, user.email, user.auth_provider)
 
-def withTestingContext(impl: str, tests: str):
-  with open("./runner/tester.py", "r") as f:
-    return "%s\n\n%s\n\n%s" % (f.read(), impl, tests)
+jobs = db.get_collection("jobs")
+job = Job.fromDict(jobs.find_one({ "status": JobStatus.PENDING.name }))
 
-tp = ConsoleTransport()
-tp.write("Testing string formatting %s %d" % ("with a string", 7))
+if job is None:
+  print("Job not found")
+  exit(1)
 
-t = Tester(tp)
+task = get_task(job.task_id)
+fb = task(job)
 
-with open("test.txt", "r") as f:
+if fb is None:
+  print("Task not found")
+  exit(1)
 
-  fc = f.read()
-  tp.write("Testing file contents: \n\n%s" % fc)
-
-  try:
-    exec(
-      withTestingContext(
-        fc,
-        """
-t.assert_not_throws("sum() - does not throw", lambda: sum(1, 2))
-t.assert_eq("sum() - adds correctly", sum(1, 2), 3)
-"""
-      )
-    )
-  except Exception as e:
-    tp.write("FAIL\n%s" % e)
+fb.run(lambda id, status: print(id, status))
+for log in fb.transport.get_logs():
+  print(log)

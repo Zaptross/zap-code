@@ -19,6 +19,13 @@ class Tester:
             if log:
                 self.transport.write("FAIL - %s\nExpected: \n\t%s\nReceived: \n\t%s" % (name, expected, input))
 
+    # Utility functions
+    def report_suite(self):
+        self.transport.write("Tests: %d/%d" % (self.passes, self.tests))
+    
+    def suite_passed(self):
+        return self.passes == self.tests
+
     ## Logged assertions
     # Equality comparisons
 

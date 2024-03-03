@@ -2,6 +2,7 @@ from bson.objectid import ObjectId
 from importlib import resources
 from . import templates
 
+from database.logs import Logs
 from database.job_status import JobStatus
 from jobs.task import Task
 from runner.tester import Tester
@@ -12,7 +13,8 @@ class FizzBuzz(Task):
 
   def __init__(self, job):
     self.executable = resources.read_text(templates, "fizzbuzz.py")
-    self.transport = CaptureTransport()
+    self.runTransport = CaptureTransport()
+    self.testTransport = CaptureTransport()
     self.job = job
 
   @property
@@ -25,29 +27,39 @@ class FizzBuzz(Task):
     toExec = self.executable.replace(self.solutionReplacementTarget(), self.job.solution)
 
     customGlobals = dict()
-    customGlobals["print"] = lambda *args: self.transport.write(*args)
+    customGlobals["print"] = lambda *args: self.runTransport.write(*args)
 
     try:
       result = JobStatus.RUNNING
       exec(toExec, customGlobals)
-      tests, passes = self.test_fizz_buzz()
+      did_pass = self.test_fizz_buzz()
 
-      if tests == passes:
+      if did_pass:
         result = JobStatus.PASS
       else:
         result = JobStatus.FAILED
       
-      self.transport.write("Tests: %d/%d" % (passes, tests))
     except Exception as e:
-      self.transport.write("Error: %s" % e)
+      self.runTransport.write("Error: %s" % e)
       result = JobStatus.FAILED
     finally:
       on_complete(self.job, result)
       return result
+  
+  def get_logs(self):
+    l = Logs()
+    l.id = self.job.id
+    l.user_id = self.job.user_id
+    l.task_id = FizzBuzz.id
+    l.logs = list(self.runTransport.get_logs())
+    l.tests = list(self.testTransport.get_logs())
+
+    return l
 
   def test_fizz_buzz(self):
-    logs = list(self.transport.get_logs())
-    t = Tester(CaptureTransport())
+    logs = list(self.runTransport.get_logs())
+    t = Tester(self.testTransport)
+
     t.assert_eq("1 = 1", logs[0], 1)
     t.assert_eq("2 = 2", logs[1], 2)
     t.assert_eq("3 = Buzz", logs[2], "Fizz")
@@ -63,4 +75,6 @@ class FizzBuzz(Task):
     t.s_assert_eq(logs[98], "Fizz")
     t.s_assert_eq(logs[99], "Buzz")
 
-    return t.tests, t.passes
+    t.report_suite()
+
+    return t.suite_passed()

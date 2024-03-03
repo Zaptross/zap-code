@@ -1,3 +1,4 @@
+from bson.objectid import ObjectId
 from importlib import resources
 from . import templates
 
@@ -7,7 +8,7 @@ from runner.tester import Tester
 from transport.capture import CaptureTransport
 
 class FizzBuzz(Task):
-  id = "2b774897-bc1c-4714-9165-ca9cb8a2995f"
+  id = ObjectId('65e456500575b443b71a8846')
 
   def __init__(self, job):
     self.executable = resources.read_text(templates, "fizzbuzz.py")

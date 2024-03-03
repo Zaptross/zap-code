@@ -1,12 +1,13 @@
+from bson.objectid import ObjectId
 from database.job_status import JobStatus
 
 class Job:
   def __init__(self):
-    self.id = None
-    self.task_id = None
-    self.user_id = None
+    self.id: ObjectId
+    self.user_id: ObjectId
+    self.task_id: ObjectId
+    self.solution: str
     self.status = JobStatus.PENDING
-    self.solution = None
 
   def fromDict(d: dict):
     job = Job()

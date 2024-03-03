@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Callable
+from bson.objectid import ObjectId
 from database.job import Job
 from database.job_status import JobStatus
 
 class Task(ABC):
   @property
   @staticmethod
-  def id() -> str:
+  def id() -> ObjectId:
     pass
 
   @abstractmethod

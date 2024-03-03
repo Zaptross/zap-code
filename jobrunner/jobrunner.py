@@ -1,11 +1,15 @@
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from time import sleep
 
 from database.config import MongoConfig
 from database.user import User
 from database.job import Job
 from jobs.get_tasks import get_task
 from database.job_status import JobStatus
+from jobprovider.database_job_provider import DatabaseJobProvider
+from transport.console import ConsoleTransport
+from jobs.task import Task
 
 load_dotenv()
 
@@ -13,26 +17,30 @@ mongoConfig = MongoConfig().fromEnvGroup("database")
 
 client = MongoClient(mongoConfig.toConnectionString())
 db = client.get_database("zapcode")
-col = db.get_collection("users")
-user = col.find_one({ "email": "test@testing.testing"})
-print(user)
-user = User.fromDict(user)
-print(user, user.id, user.email, user.auth_provider)
 
-jobs = db.get_collection("jobs")
-job = Job.fromDict(jobs.find_one({ "status": JobStatus.PENDING.name }))
+jp = DatabaseJobProvider(db)
+cl = ConsoleTransport()
 
-if job is None:
-  print("Job not found")
-  exit(1)
+while True:
+  job = jp.next()
 
-task = get_task(job.task_id)
-fb = task(job)
+  if job is None:
+    cl.write("No jobs found, waiting for 5 seconds...")
+    sleep(5)
+    continue
 
-if fb is None:
-  print("Task not found")
-  exit(1)
+  taskClass = get_task(job.task_id)
+  if taskClass is None:
+    cl.write("Task not found")
+    jp.on_complete(job, JobStatus.FAILED)
+    continue
 
-fb.run(lambda id, status: print(id, status))
-for log in fb.transport.get_logs():
-  print(log)
+  task: Task = taskClass(job)
+
+  if task is None:
+    cl.write("Task not found")
+    jp.on_complete(job, JobStatus.FAILED)
+    continue
+
+  status = task.run(jp.on_complete)
+  cl.write("Job %s completed as %s" % (job.id, status.name))

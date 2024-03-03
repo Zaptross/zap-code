@@ -1,7 +1,8 @@
 from transport.transport import Transport
 
 class CaptureTransport(Transport):
-  logs = []
+  def __init__(self):
+    self.logs = []
 
   def write(self, message: str):
     self.logs.append(message)

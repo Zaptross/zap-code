@@ -41,7 +41,8 @@ class FizzBuzz(Task):
       self.transport.write("Error: %s" % e)
       result = JobStatus.FAILED
     finally:
-      on_complete(FizzBuzz.id, result)
+      on_complete(self.job, result)
+      return result
 
   def test_fizz_buzz(self):
     logs = list(self.transport.get_logs())

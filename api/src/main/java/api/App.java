@@ -15,15 +15,19 @@ import api.middleware.AuthHandler;
 import dagger.Component;
 import api.config.DotenvModule;
 import api.database.MongoFactory;
+import api.database.CollectionFactory;
 
 public class App {
     @Singleton
     @Component(modules = {
             DotenvModule.class,
             MongoFactory.class,
+            CollectionFactory.class, // generated
     })
     public interface ApiApp {
         MongoDatabase database();
+
+        MongoCollection<User> userCollection();
     }
 
     public String getGreeting() {
@@ -40,9 +44,7 @@ public class App {
                 .start(7070);
 
         try {
-            MongoDatabase database = api.database();
-            MongoCollection<User> collection = database.getCollection("users", User.class);
-            User user = collection.find(eq("email", "test@testing.testing")).first();
+            User user = api.userCollection().find(eq("email", "test@testing.testing")).first();
 
             if (user == null) {
                 user = new User();
@@ -50,6 +52,7 @@ public class App {
                 user.authProvider = AuthProvider.GITHUB;
                 user.email = "test@testing.testing";
 
+                var res = api.userCollection().insertOne(user);
                 res.wait();
             }
         } catch (Exception e) {
@@ -59,8 +62,7 @@ public class App {
         app.before("/users/<email>", new AuthHandler());
         app.get("/users/<email>", ctx -> {
             try {
-                MongoDatabase database = api.database();
-                MongoCollection<User> collection = database.getCollection("users", User.class);
+                var collection = api.userCollection();
                 User foundUser = collection.find(eq("email", ctx.pathParam("email"))).first();
                 ctx.json(foundUser);
             } catch (Exception e) {

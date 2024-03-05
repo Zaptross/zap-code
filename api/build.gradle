@@ -40,3 +40,10 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+import com.zaptross.codegen.BuildCollectionFactoryTask;
+task buildCollectionFactory(type: BuildCollectionFactoryTask) {}
+
+tasks.named('build') {
+    dependsOn buildCollectionFactory
+}

@@ -27,6 +27,8 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
     implementation('io.github.cdimascio:dotenv-java:3.0.0')
+    implementation('com.google.dagger:dagger:2.51')
+    annotationProcessor('com.google.dagger:dagger-compiler:2.51')
 }
 
 application {

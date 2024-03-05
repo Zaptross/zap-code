@@ -11,6 +11,7 @@ import com.mongodb.client.MongoDatabase;
 import io.javalin.Javalin;
 import api.database.entities.User;
 import api.database.enums.AuthProvider;
+import api.middleware.AuthHandler;
 import dagger.Component;
 import api.config.DotenvModule;
 import api.database.MongoFactory;
@@ -55,6 +56,7 @@ public class App {
             e.printStackTrace();
         }
 
+        app.before("/users/<email>", new AuthHandler());
         app.get("/users/<email>", ctx -> {
             try {
                 MongoDatabase database = api.database();

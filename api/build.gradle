@@ -44,6 +44,8 @@ tasks.named('test') {
 import com.zaptross.codegen.BuildCollectionFactoryTask;
 task buildCollectionFactory(type: BuildCollectionFactoryTask) {}
 
-tasks.named('build') {
-    dependsOn buildCollectionFactory
+gradle.beforeProject {
+    tasks.named('compileJava').configure {
+        dependsOn buildCollectionFactory
+    }
 }

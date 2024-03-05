@@ -1,7 +1,8 @@
 package api.database.entities;
 
 import org.bson.types.ObjectId;
-import api.database.JobStatus;
+
+import api.database.enums.JobStatus;
 
 public class Job {
   public ObjectId id;

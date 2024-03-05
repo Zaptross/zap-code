@@ -1,4 +1,4 @@
-package api.database;
+package api.database.enums;
 
 /**
  * Based on the work by The Elite Gentleman

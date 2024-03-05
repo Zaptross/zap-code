@@ -1,4 +1,4 @@
-package api.database.entities;
+package api.database.enums;
 
 public enum AuthProvider {
   GITHUB

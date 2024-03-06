@@ -39,7 +39,7 @@ public class BuildCollectionFactoryTask extends DefaultTask {
         "/*\n" +
         " * This file is generated. Do not directly modify this file.\n" +
         " */\n" +
-        "package api.database;\n" +
+        "package api.generated;\n" +
         "\n" +
         "import javax.inject.Inject;\n" +
         "import javax.inject.Singleton;\n" +
@@ -59,10 +59,12 @@ public class BuildCollectionFactoryTask extends DefaultTask {
         String.join("\n", imports),
         String.join("\n", provides));
 
+    var outputFilename = "CollectionFactory.java";
+
     try {
       var factoryFile = new BufferedWriter(
           new FileWriter(
-              System.getProperty("user.dir") + "/api/src/main/java/api/database/CollectionFactory.java"));
+              System.getProperty("user.dir") + "/api/src/main/java/api/generated/" + outputFilename));
       factoryFile.write(generatedFactory);
       factoryFile.close();
       System.out.println("Generated CollectionFactory.java from buildSrc");

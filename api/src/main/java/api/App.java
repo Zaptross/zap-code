@@ -15,7 +15,7 @@ import api.middleware.AuthHandler;
 import dagger.Component;
 import api.config.DotenvModule;
 import api.database.MongoFactory;
-import api.database.CollectionFactory;
+import api.generated.CollectionFactory;
 
 public class App {
     @Singleton

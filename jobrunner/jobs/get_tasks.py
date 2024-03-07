@@ -1,8 +1,10 @@
 from .task import Task
 from .fizzbuzz import FizzBuzz
+from .reverseastring import ReverseAString
 
 __all__ = [
   FizzBuzz,
+  ReverseAString,
 ]
 
 def get_task(id: str) -> Task:

@@ -13,6 +13,8 @@ import api.database.entities.User;
 import api.database.enums.AuthProvider;
 import api.middleware.AuthHandler;
 import dagger.Component;
+import api.api.ApiFactory;
+import api.api.TaskApiBuilder;
 import api.config.DotenvModule;
 import api.database.MongoFactory;
 import api.generated.CollectionFactory;
@@ -23,11 +25,17 @@ public class App {
             DotenvModule.class,
             MongoFactory.class,
             CollectionFactory.class, // generated
+            ApiFactory.class,
+            TaskApiBuilder.class
     })
     public interface ApiApp {
         MongoDatabase database();
 
         MongoCollection<User> userCollection();
+
+        TaskApiBuilder taskApiBuilder();
+
+        Javalin javalin();
     }
 
     public String getGreeting() {
@@ -35,13 +43,14 @@ public class App {
     }
 
     public static void main(String[] args) {
+
         ApiApp api = DaggerApp_ApiApp
                 .builder()
                 .build();
 
-        var app = Javalin
-                .create()
-                .start(7070);
+        var app = api.javalin();
+        api.taskApiBuilder().apply();
+        app.start(7070);
 
         try {
             User user = api.userCollection().find(eq("email", "test@testing.testing")).first();

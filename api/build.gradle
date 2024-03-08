@@ -44,7 +44,13 @@ tasks.named('test') {
 import com.zaptross.codegen.BuildCollectionFactoryTask;
 task buildCollectionFactory(type: BuildCollectionFactoryTask) {}
 
+task rmGeneratedFiles(type: Delete) {
+    delete 'src/main/java/api/generated'
+    println 'Deleted src/main/java/api/generated files'
+}
+
 gradle.beforeProject {
+    rmGeneratedFiles
     tasks.named('compileJava').configure {
         dependsOn buildCollectionFactory
     }

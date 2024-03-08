@@ -11,6 +11,8 @@ import org.gradle.api.tasks.TaskAction;
 public class BuildCollectionFactoryTask extends DefaultTask {
   @TaskAction
   public void buildCollectionFactory() {
+    FileUtils.ensureGeneratedDir();
+
     var fd = System.getProperty("user.dir") + "/api/src/main/java/api/database/entities/";
 
     var imports = new ArrayList<String>();

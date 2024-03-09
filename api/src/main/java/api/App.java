@@ -18,7 +18,10 @@ import api.database.entities.User;
 import api.database.enums.AuthProvider;
 // generated imports
 import api.generated.CollectionFactory;
-import api.generated.LogsApiBuilder;
+import api.generated.LogsIdApiBuilder;
+import api.generated.RootApiBuilder;
+import api.generated.SolutionsApiBuilder;
+import api.generated.SolutionsIdApiBuilder;
 import api.generated.TasksApiBuilder;
 import api.generated.UsersApiBuilder;
 import api.middleware.AuthHandler;
@@ -31,11 +34,14 @@ public class App {
             DotenvModule.class,
             MongoFactory.class,
             ApiFactory.class,
+            JobProviderModule.class, // generated
             CollectionFactory.class, // generated
+            RootApiBuilder.class, // generated
+            LogsIdApiBuilder.class, // generated
             TasksApiBuilder.class, // generated
+            SolutionsApiBuilder.class, // generated
+            SolutionsIdApiBuilder.class, // generated
             UsersApiBuilder.class, // generated
-            LogsApiBuilder.class, // generated
-            JobProviderModule.class // generated
     })
 
     public interface AppBuilder {
@@ -43,11 +49,17 @@ public class App {
 
         MongoCollection<User> userCollection();
 
+        RootApiBuilder rootApiBuilder();
+
+        LogsIdApiBuilder logsIdApiBuilder();
+
         TasksApiBuilder tasksApiBuilder();
 
-        UsersApiBuilder usersApiBuilder();
+        SolutionsApiBuilder solutionsApiBuilder();
 
-        LogsApiBuilder logsApiBuilder();
+        SolutionsIdApiBuilder solutionsIdApiBuilder();
+
+        UsersApiBuilder usersApiBuilder();
 
         Javalin javalin();
     }
@@ -63,9 +75,12 @@ public class App {
                 .build();
 
         var app = api.javalin();
+        api.rootApiBuilder().apply();
+        api.logsIdApiBuilder().apply();
         api.tasksApiBuilder().apply();
+        api.solutionsApiBuilder().apply();
+        api.solutionsIdApiBuilder().apply();
         api.usersApiBuilder().apply();
-        api.logsApiBuilder().apply();
         app.start(7070);
 
         try {

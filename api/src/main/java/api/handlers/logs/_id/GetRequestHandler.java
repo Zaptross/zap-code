@@ -1,4 +1,4 @@
-package api.handlers.logs;
+package api.handlers.logs._id;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -26,10 +26,10 @@ public class GetRequestHandler implements Handler {
   @Override
   public void handle(@NotNull Context ctx) throws Exception {
     try {
-      var runId = ctx.queryParam("runId");
+      var runId = ctx.pathParam("id");
 
       if (runId == null) {
-        ctx.status(400).result("No runId provided.");
+        ctx.status(400).result("No run id provided.");
         return;
       }
 

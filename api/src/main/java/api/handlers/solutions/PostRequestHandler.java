@@ -1,4 +1,4 @@
-package api.handlers.tasks;
+package api.handlers.solutions;
 
 import javax.inject.Inject;
 

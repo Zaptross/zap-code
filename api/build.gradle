@@ -43,6 +43,8 @@ tasks.named('test') {
 
 import com.zaptross.codegen.BuildCollectionFactoryTask;
 task buildCollectionFactory(type: BuildCollectionFactoryTask) {}
+import com.zaptross.codegen.BuildRouteApiBuilderTask;
+task buildApiBuilders(type: BuildRouteApiBuilderTask) {}
 
 task rmGeneratedFiles(type: Delete) {
     delete 'src/main/java/api/generated'
@@ -53,5 +55,6 @@ gradle.beforeProject {
     rmGeneratedFiles
     tasks.named('compileJava').configure {
         dependsOn buildCollectionFactory
+        dependsOn buildApiBuilders
     }
 }

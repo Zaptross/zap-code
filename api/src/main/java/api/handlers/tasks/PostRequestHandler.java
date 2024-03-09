@@ -36,9 +36,10 @@ public class PostRequestHandler implements Handler {
         return;
       }
 
-      jobs.insertOne(j.toJob());
+      var job = j.toJob();
+      jobs.insertOne(job);
 
-      ctx.status(201).result("CREATED");
+      ctx.status(201).result(job.id.toString());
     } catch (Exception e) {
       ctx.status(500).result("Something went wrong trying to process your request.");
     }

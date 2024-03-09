@@ -31,18 +31,18 @@ public class DatabaseJobProvider implements JobProvider {
   public void CancelJob(ObjectId jobId) {
     jobs.updateOne(
         new Document("_id", jobId),
-        new Document("$set", new Document("status", JobStatus.CANCELED)));
+        new Document("$set", new Document("status", JobStatus.CANCELLED)));
   }
 
   @Override
-  public JobStatus GetJobStatus(ObjectId jobId) {
+  public Job GetJob(ObjectId jobId) {
     var job = jobs.find(eq("_id", jobId)).first();
 
     if (job == null || job.id == null) {
-      return JobStatus.UNKNOWN;
+      return null;
     }
 
-    return job.status;
+    return job;
   }
 
 }

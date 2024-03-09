@@ -1,11 +1,13 @@
 package api.database.entities;
 
+import java.util.List;
+
 import org.bson.types.ObjectId;
 
 public class Logs {
-  public ObjectId Id;
-  public ObjectId UserId;
-  public ObjectId TaskId;
-  public String[] Tests;
-  public String[] Logs;
+  public ObjectId id;
+  public ObjectId userId;
+  public ObjectId taskId;
+  public List<String> logs;
+  public List<String> tests;
 }

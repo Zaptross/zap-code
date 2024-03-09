@@ -12,9 +12,9 @@ class Logs:
     l = Logs()
     if "_id" in data:
       l.id = data["_id"]
-    if "job_id" in data:
+    if "jobId" in data:
       l.user_id = data["user_id"]
-    if "task_id" in data:
+    if "taskId" in data:
       l.task_id = data["task_id"]
     if "tests" in data:
       l.tests = data["tests"]
@@ -26,8 +26,8 @@ class Logs:
   def to_dict(self) -> dict:
     return {
       "_id": self.id,
-      "user_id": self.user_id,
-      "task_id": self.task_id,
+      "userId": self.user_id,
+      "taskId": self.task_id,
       "tests": self.tests,
       "logs": self.logs
     }

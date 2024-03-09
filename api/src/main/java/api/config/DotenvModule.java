@@ -1,8 +1,9 @@
 package api.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import dagger.Module;
 import dagger.Provides;
-import io.github.cdimascio.dotenv.Dotenv;
 
 @Module
 public class DotenvModule {

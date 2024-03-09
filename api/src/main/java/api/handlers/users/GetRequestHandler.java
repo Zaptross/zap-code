@@ -10,12 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 import com.mongodb.client.MongoCollection;
 
+import io.javalin.http.Context;
+import io.javalin.http.Handler;
+
 import api.api.entities.ApiUser;
 import api.database.entities.User;
 import api.tasks.DaggerTasks;
 import api.tasks.Task;
-import io.javalin.http.Context;
-import io.javalin.http.Handler;
 
 public class GetRequestHandler implements Handler {
   public final Set<Task> tasks;

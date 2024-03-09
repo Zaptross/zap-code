@@ -2,8 +2,9 @@ package api.config;
 
 import javax.inject.Inject;
 
-import api.env.EnvConfig;
 import io.github.cdimascio.dotenv.Dotenv;
+
+import api.env.EnvConfig;
 
 public class MongoConfig {
   public String User;

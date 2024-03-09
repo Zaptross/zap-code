@@ -1,4 +1,3 @@
-
 package api.handlers.tasks;
 
 import java.util.Set;
@@ -9,12 +8,13 @@ import org.jetbrains.annotations.NotNull;
 
 import com.mongodb.client.MongoCollection;
 
+import io.javalin.http.Context;
+import io.javalin.http.Handler;
+
 import api.api.entities.JobRequest;
 import api.database.entities.Job;
 import api.tasks.DaggerTasks;
 import api.tasks.Task;
-import io.javalin.http.Context;
-import io.javalin.http.Handler;
 
 public class PostRequestHandler implements Handler {
   public final Set<Task> tasks;

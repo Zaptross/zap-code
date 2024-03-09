@@ -3,9 +3,10 @@ package api.api;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.javalin.Javalin;
+
 import dagger.Module;
 import dagger.Provides;
-import io.javalin.Javalin;
 
 @Module
 public class ApiFactory {

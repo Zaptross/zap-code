@@ -164,10 +164,10 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         "\n" +
         "import javax.inject.Inject;\n" +
         "\n" +
-        "import dagger.Module;\n" +
         "import io.javalin.Javalin;\n" +
         "\n" +
         "%s\n" + // imports eg: "import api.handlers.$nameLower.GetRequestHandler;"
+        "import dagger.Module;\n" +
         "\n" +
         "@Module\n" +
         "public class %sApiBuilder {\n" +

@@ -5,23 +5,24 @@ import static com.mongodb.client.model.Filters.eq;
 import javax.inject.Singleton;
 
 import org.bson.types.ObjectId;
+
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import io.javalin.Javalin;
-import api.database.entities.User;
-import api.database.enums.AuthProvider;
-import api.middleware.AuthHandler;
-import dagger.Component;
+
 import api.api.ApiFactory;
 import api.config.DotenvModule;
 import api.database.MongoFactory;
-
+import api.database.entities.User;
+import api.database.enums.AuthProvider;
 // generated imports
 import api.generated.CollectionFactory;
+import api.generated.LogsApiBuilder;
 import api.generated.TasksApiBuilder;
 import api.generated.UsersApiBuilder;
-import api.generated.LogsApiBuilder;
+import api.middleware.AuthHandler;
+import dagger.Component;
 
 public class App {
     @Singleton

@@ -21,6 +21,7 @@ import api.database.MongoFactory;
 import api.generated.CollectionFactory;
 import api.generated.TasksApiBuilder;
 import api.generated.UsersApiBuilder;
+import api.generated.LogsApiBuilder;
 
 public class App {
     @Singleton
@@ -30,7 +31,8 @@ public class App {
             ApiFactory.class,
             CollectionFactory.class, // generated
             TasksApiBuilder.class, // generated
-            UsersApiBuilder.class // generated
+            UsersApiBuilder.class, // generated
+            LogsApiBuilder.class, // generated
     })
 
     public interface AppBuilder {
@@ -41,6 +43,8 @@ public class App {
         TasksApiBuilder tasksApiBuilder();
 
         UsersApiBuilder usersApiBuilder();
+
+        LogsApiBuilder logsApiBuilder();
 
         Javalin javalin();
     }
@@ -58,6 +62,7 @@ public class App {
         var app = api.javalin();
         api.tasksApiBuilder().apply();
         api.usersApiBuilder().apply();
+        api.logsApiBuilder().apply();
         app.start(7070);
 
         try {

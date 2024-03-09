@@ -6,9 +6,10 @@ package api.database.enums;
 public enum JobStatus {
   PENDING("PENDING"),
   RUNNING("RUNNING"),
-  COMPLETED("COMPLETED"),
+  PASS("PASS"),
   FAILED("FAILED"),
-  CANCELED("CANCELED"),
+  COMPLETED("COMPLETED"),
+  CANCELLED("CANCELLED"),
   TIMEOUT("TIMEOUT"),
   UNKNOWN("UNKNOWN");
 

@@ -8,5 +8,15 @@
     "Javalin",
     "jobrunner",
     "zapcode"
+  ],
+  "java.saveActions.organizeImports": true,
+  "java.completion.importOrder": [
+    "#",
+    "java",
+    "javax",
+    "org",
+    "com",
+    "io",
+    ""
   ]
 }

@@ -49,10 +49,9 @@ public class BuildCollectionFactoryTask extends DefaultTask {
         "import com.mongodb.client.MongoCollection;\n" +
         "import com.mongodb.client.MongoDatabase;\n" +
         "\n" +
+        "%s\n" +
         "import dagger.Module;\n" +
         "import dagger.Provides;\n" +
-        "\n" +
-        "%s\n" +
         "\n" +
         "@Module\n" +
         "public class CollectionFactory {\n" +

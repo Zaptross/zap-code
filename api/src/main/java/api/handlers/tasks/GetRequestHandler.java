@@ -7,10 +7,11 @@ import javax.inject.Inject;
 
 import org.jetbrains.annotations.NotNull;
 
-import api.api.entities.ApiTask;
-import api.tasks.DaggerTasks;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+
+import api.api.entities.ApiTask;
+import api.tasks.DaggerTasks;
 
 public class GetRequestHandler implements Handler {
   public final Set<ApiTask> apiTasks;

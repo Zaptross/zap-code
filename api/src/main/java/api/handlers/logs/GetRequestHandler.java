@@ -9,10 +9,11 @@ import org.jetbrains.annotations.NotNull;
 
 import com.mongodb.client.MongoCollection;
 
-import api.api.entities.ApiLogs;
-import api.database.entities.Logs;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+
+import api.api.entities.ApiLogs;
+import api.database.entities.Logs;
 
 public class GetRequestHandler implements Handler {
   public final MongoCollection<Logs> logs;

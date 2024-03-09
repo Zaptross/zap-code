@@ -57,13 +57,13 @@ class FizzBuzz(Task):
     return l
 
   def test_fizz_buzz(self):
-    logs = list(self.runTransport.get_logs())
+    logs = self.runTransport.get_logs()
     t = Tester(self.testTransport)
 
-    t.assert_eq("1 = 1", logs[0], 1)
-    t.assert_eq("2 = 2", logs[1], 2)
+    t.assert_eq("1 = 1", logs[0], "1")
+    t.assert_eq("2 = 2", logs[1], "2")
     t.assert_eq("3 = Buzz", logs[2], "Fizz")
-    t.assert_eq("4 = 4", logs[3], 4)
+    t.assert_eq("4 = 4", logs[3], "4")
     t.assert_eq("5 = Fizz", logs[4], "Buzz")
     t.assert_eq("15 = FizzBuzz", logs[14], "FizzBuzz")
     t.assert_len("length = 100", logs, 100)

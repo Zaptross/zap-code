@@ -5,7 +5,10 @@ class CaptureTransport(Transport):
     self.logs = []
 
   def write(self, message: str):
-    self.logs.append(message)
+    if isinstance(message, str):
+      self.logs.append(message)
+    else:
+      self.logs.append(str(message))
   
   def get_logs(self):
     return self.logs

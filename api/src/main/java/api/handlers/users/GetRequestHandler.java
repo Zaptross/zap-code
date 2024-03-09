@@ -1,5 +1,7 @@
 package api.handlers.users;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -34,7 +36,7 @@ public class GetRequestHandler implements Handler {
       return;
     }
 
-    var user = users.find().first();
+    var user = users.find(eq("email", email)).first();
 
     if (user == null) {
       ctx.status(404).result("User not found.");

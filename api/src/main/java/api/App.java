@@ -22,6 +22,7 @@ import api.generated.LogsApiBuilder;
 import api.generated.TasksApiBuilder;
 import api.generated.UsersApiBuilder;
 import api.middleware.AuthHandler;
+import api.providers.jobs.JobProviderModule;
 import dagger.Component;
 
 public class App {
@@ -34,6 +35,7 @@ public class App {
             TasksApiBuilder.class, // generated
             UsersApiBuilder.class, // generated
             LogsApiBuilder.class, // generated
+            JobProviderModule.class // generated
     })
 
     public interface AppBuilder {

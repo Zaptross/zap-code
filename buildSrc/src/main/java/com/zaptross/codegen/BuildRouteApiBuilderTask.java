@@ -14,31 +14,12 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
     FileUtils.ensureGeneratedDir();
 
     var fd = System.getProperty("user.dir") + "/api/src/main/java/api/handlers/";
-    var files = new File(fd).listFiles();
 
-    if (files.length == 0) {
-      System.out.println("No files found in " + fd);
-      return;
-    }
+    var filePaths = collectAllHandlerFilepaths(fd);
+    var classPathGroups = buildRouteGroupsFromFilepaths(filePaths);
 
-    ArrayList<ArrayList<ArrayList<String>>> classPathGroups = new ArrayList<ArrayList<ArrayList<String>>>();
-    for (int i = 0; i < files.length; i++) {
-      if (files[i].isDirectory()) {
-        var subFiles = files[i].listFiles();
-        var classPath = new ArrayList<ArrayList<String>>();
-        for (int j = 0; j < subFiles.length; j++) {
-          var segments = new ArrayList<String>();
-          if (subFiles[j].getName().endsWith("RequestHandler.java")) {
-            segments.add(files[i].getName());
-            segments.add(subFiles[j].getName().replace(".java", ""));
-            classPath.add(segments);
-          }
-        }
-        classPathGroups.add(classPath);
-      }
-    }
-
-    System.out.println("Generating ApiBuilders for " + classPathGroups.size() + " route groups...");
+    System.out.println(
+        String.format("Generating ApiBuilders for %d route groups...", classPathGroups.size()));
     for (var cpg : classPathGroups) {
       var len = cpg.get(0).toArray().length;
       var fileName = buildFileName(cpg.get(0));
@@ -61,16 +42,97 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         System.out.println(String.format("%s", fileName));
         System.out.println(getMethodsHandled(cpg));
       } catch (Exception e) {
-        System.out.println(String.format("Failed to generate %s from buildSrc", fileName));
+        System.out.println(String.format("Failed to generate %s from buildSrc",
+            fileName));
         e.printStackTrace();
       }
     }
+
+  }
+
+  private ArrayList<String> collectAllHandlerFilepaths(String handlerDirectory) {
+    var filePaths = new ArrayList<String>();
+    var directories = new ArrayList<File>();
+    directories.add(new File(handlerDirectory));
+
+    while (directories.size() > 0) {
+      var files = directories.remove(0).listFiles();
+
+      if (files.length == 0) {
+        continue;
+      }
+
+      for (var file : files) {
+        if (file.isDirectory()) {
+          directories.add(file);
+        } else {
+          filePaths.add(file.getAbsolutePath().replace(handlerDirectory, "").replace(".java", ""));
+        }
+      }
+    }
+
+    filePaths.sort((a, b) -> a.compareTo(b));
+
+    return filePaths;
+  }
+
+  private ArrayList<ArrayList<ArrayList<String>>> buildRouteGroupsFromFilepaths(ArrayList<String> filePaths) {
+    var groups = new ArrayList<ArrayList<ArrayList<String>>>();
+    for (var fp : filePaths) {
+      var split = splitFilePath(fp);
+      if (groups.size() == 0) {
+        var classPath = new ArrayList<ArrayList<String>>();
+        classPath.add(split);
+        groups.add(classPath);
+        continue;
+      }
+
+      if (split.size() == 1) {
+        for (var cpg : groups) {
+          if (cpg.get(0).size() == 1) {
+            cpg.add(split);
+          }
+          break;
+        }
+      } else {
+        var added = false;
+        for (var cpg : groups) {
+          if (split.size() == cpg.get(0).size() && split.get(0).equals(cpg.get(0).get(0))) {
+            cpg.add(split);
+            added = true;
+          }
+        }
+
+        if (!added) {
+          var classPath = new ArrayList<ArrayList<String>>();
+          classPath.add(split);
+          groups.add(classPath);
+        }
+      }
+    }
+
+    return groups;
+  }
+
+  private ArrayList<String> splitFilePath(String filePath) {
+    var al = new ArrayList<String>();
+    for (var segment : filePath.split("/")) {
+      al.add(segment);
+    }
+    return al;
   }
 
   private String buildClassName(ArrayList<String> classPath) {
     var out = "";
+    if (classPath.size() == 1) {
+      return "Root";
+    }
     for (var path : classPath.subList(0, classPath.size() - 1)) {
-      out += capitaliseFirstLetter(path);
+      if (path.startsWith("_")) {
+        out += capitaliseFirstLetter(path.replace("_", ""));
+      } else {
+        out += capitaliseFirstLetter(path);
+      }
     }
     return out;
   }
@@ -84,7 +146,16 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
   }
 
   private String buildRoute(ArrayList<String> classPath) {
-    return "" + String.join("/", classPath.subList(0, classPath.size() - 1)).toLowerCase();
+    var routeSegments = new ArrayList<String>();
+    for (var segment : classPath.subList(0, classPath.size() - 1)) {
+      if (segment.startsWith("_")) {
+        routeSegments.add(
+            segment.replace("_", "{") + "}");
+      } else {
+        routeSegments.add(segment);
+      }
+    }
+    return "/" + String.join("/", routeSegments).toLowerCase();
   }
 
   private String buildApplies(ArrayList<ArrayList<String>> classPaths) {
@@ -110,7 +181,7 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
     var route = buildRoute(classPaths.get(0));
     for (var classPath : classPaths) {
       var className = getFieldNameFromClassName(classPath.get(classPath.size() - 1));
-      methods.add(String.format("%s\t/%s", getFieldNameFromClassName(className).toUpperCase(), route));
+      methods.add(String.format("%s\t%s", getFieldNameFromClassName(className).toUpperCase(), route));
     }
     return "  -> " + String.join("\n  -> ", methods);
   }
@@ -172,7 +243,7 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         "@Module\n" +
         "public class %sApiBuilder {\n" +
         "  private final Javalin router;\n" +
-        "  private final String basePath = \"/%s\";\n" +
+        "  private final String basePath = \"%s\";\n" +
         "%s\n" +
         "\n" +
         "  @Inject\n" +

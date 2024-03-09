@@ -14,26 +14,29 @@ import api.database.enums.AuthProvider;
 import api.middleware.AuthHandler;
 import dagger.Component;
 import api.api.ApiFactory;
-import api.api.TaskApiBuilder;
 import api.config.DotenvModule;
 import api.database.MongoFactory;
+
+// generated imports
 import api.generated.CollectionFactory;
+import api.generated.TasksApiBuilder;
 
 public class App {
     @Singleton
     @Component(modules = {
             DotenvModule.class,
             MongoFactory.class,
-            CollectionFactory.class, // generated
             ApiFactory.class,
-            TaskApiBuilder.class
+            CollectionFactory.class, // generated
+            TasksApiBuilder.class, // generated
     })
-    public interface ApiApp {
+
+    public interface AppBuilder {
         MongoDatabase database();
 
         MongoCollection<User> userCollection();
 
-        TaskApiBuilder taskApiBuilder();
+        TasksApiBuilder tasksApiBuilder();
 
         Javalin javalin();
     }
@@ -44,12 +47,12 @@ public class App {
 
     public static void main(String[] args) {
 
-        ApiApp api = DaggerApp_ApiApp
+        AppBuilder api = DaggerApp_AppBuilder
                 .builder()
                 .build();
 
         var app = api.javalin();
-        api.taskApiBuilder().apply();
+        api.tasksApiBuilder().apply();
         app.start(7070);
 
         try {

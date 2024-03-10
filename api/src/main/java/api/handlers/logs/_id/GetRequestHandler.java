@@ -28,8 +28,8 @@ public class GetRequestHandler implements RequestHandler {
     try {
       var runId = ctx.pathParam("id");
 
-      if (runId == null) {
-        ctx.status(400).result("No run id provided.");
+      if (runId == null || !ObjectId.isValid(runId)) {
+        ctx.status(400).result("Missing or invalid run id provided.");
         return;
       }
 

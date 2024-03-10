@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -12,15 +13,18 @@ import api.api.RequestHandler;
 import api.api.entities.ApiJob;
 import api.middleware.AuthMiddleware;
 import api.providers.jobs.JobProvider;
+import api.providers.logger.LoggerProvider;
 
 public class GetRequestHandler implements RequestHandler {
   private final JobProvider jobProvider;
+  private final Logger logger;
   private final Handler authMiddleware;
 
   @Inject
-  public GetRequestHandler(JobProvider jobProvider, AuthMiddleware authMiddleware) {
+  public GetRequestHandler(JobProvider jobProvider, AuthMiddleware authMiddleware, LoggerProvider loggerProvider) {
     this.jobProvider = jobProvider;
     this.authMiddleware = authMiddleware;
+    this.logger = loggerProvider.getLogger(getClass());
   }
 
   @Override
@@ -48,6 +52,7 @@ public class GetRequestHandler implements RequestHandler {
 
       ctx.json(ApiJob.fromJob(job));
     } catch (Exception e) {
+      logger.error("Failed to get solution by id.", e);
       ctx.status(500).result("Something went wrong while processing your request.");
     }
   }

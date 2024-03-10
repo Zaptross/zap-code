@@ -20,6 +20,7 @@ import api.generated.SolutionsIdApiBuilder;
 import api.generated.TasksApiBuilder;
 import api.generated.UsersEmailApiBuilder;
 import api.providers.jobs.JobProviderModule;
+import api.providers.logger.LoggerProviderModule;
 import dagger.Component;
 
 public class App {
@@ -28,6 +29,7 @@ public class App {
             DotenvModule.class,
             MongoFactory.class,
             ApiFactory.class,
+            LoggerProviderModule.class,
             JobProviderModule.class, // generated
             CollectionFactory.class, // generated
             RootApiBuilder.class, // generated

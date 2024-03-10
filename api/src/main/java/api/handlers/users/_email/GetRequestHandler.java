@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import com.mongodb.client.MongoCollection;
 
@@ -17,6 +18,7 @@ import api.api.RequestHandler;
 import api.api.entities.ApiUser;
 import api.database.entities.User;
 import api.middleware.AuthMiddleware;
+import api.providers.logger.LoggerProvider;
 import api.tasks.DaggerTasks;
 import api.tasks.Task;
 
@@ -24,12 +26,14 @@ public class GetRequestHandler implements RequestHandler {
   public final Set<Task> tasks;
   public final MongoCollection<User> users;
   public final Handler auth;
+  public final Logger logger;
 
   @Inject
-  public GetRequestHandler(MongoCollection<User> users, AuthMiddleware auth) {
+  public GetRequestHandler(MongoCollection<User> users, AuthMiddleware auth, LoggerProvider logger) {
     this.tasks = DaggerTasks.create().tasks();
     this.users = users;
     this.auth = auth;
+    this.logger = logger.getLogger(getClass());
   }
 
   @Override
@@ -39,20 +43,25 @@ public class GetRequestHandler implements RequestHandler {
 
   @Override
   public void handle(@NotNull Context ctx) throws Exception {
-    var email = ctx.pathParam("email");
+    try {
+      var email = ctx.pathParam("email");
 
-    if (email == null || email.isBlank()) {
-      ctx.status(400).result("No email provided.");
-      return;
+      if (email == null || email.isBlank()) {
+        ctx.status(400).result("No email provided.");
+        return;
+      }
+
+      var user = users.find(eq("email", email)).first();
+
+      if (user == null) {
+        ctx.status(404).result("User not found.");
+        return;
+      }
+
+      ctx.json(ApiUser.fromUser(user));
+    } catch (Exception e) {
+      logger.error("Failed to get user by email.", e);
+      ctx.status(500).result("Something went wrong trying to process your request.");
     }
-
-    var user = users.find(eq("email", email)).first();
-
-    if (user == null) {
-      ctx.status(404).result("User not found.");
-      return;
-    }
-
-    ctx.json(ApiUser.fromUser(user));
   }
 }

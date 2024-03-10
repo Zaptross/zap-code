@@ -11,6 +11,7 @@ public class MongoConfig {
   public String Password;
   public String Host;
   public String Port;
+  public String Database;
 
   @Inject
   public MongoConfig(Dotenv env) {

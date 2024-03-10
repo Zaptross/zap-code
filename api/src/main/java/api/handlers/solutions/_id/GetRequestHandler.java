@@ -25,8 +25,8 @@ public class GetRequestHandler implements RequestHandler {
     try {
       var jobId = ctx.pathParam("id");
 
-      if (jobId == null) {
-        ctx.status(400).result("No job id provided.");
+      if (jobId == null || !ObjectId.isValid(jobId)) {
+        ctx.status(400).result("Missing or invalid job id provided.");
         return;
       }
 

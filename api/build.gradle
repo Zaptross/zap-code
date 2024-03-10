@@ -28,6 +28,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
     implementation('io.github.cdimascio:dotenv-java:3.0.0')
     implementation('com.google.dagger:dagger:2.51')
+    implementation('org.slf4j:slf4j-simple:2.0.10')
     annotationProcessor('com.google.dagger:dagger-compiler:2.51')
 }
 
@@ -41,20 +42,29 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-import com.zaptross.codegen.BuildCollectionFactoryTask;
-task buildCollectionFactory(type: BuildCollectionFactoryTask) {}
-import com.zaptross.codegen.BuildRouteApiBuilderTask;
-task buildApiBuilders(type: BuildRouteApiBuilderTask) {}
-
 task rmGeneratedFiles(type: Delete) {
     delete 'src/main/java/api/generated'
     println 'Deleted src/main/java/api/generated files'
 }
 
+import com.zaptross.codegen.BuildRouteApiBuilderTask;
+task buildApiBuilders(type: BuildRouteApiBuilderTask) {
+    configure {
+        mustRunAfter rmGeneratedFiles
+    }
+}
+import com.zaptross.codegen.BuildCollectionFactoryTask;
+task buildCollectionFactory(type: BuildCollectionFactoryTask) {
+    configure {
+        mustRunAfter buildApiBuilders
+    }
+}
+
 gradle.beforeProject {
-    rmGeneratedFiles
     tasks.named('compileJava').configure {
         dependsOn buildCollectionFactory
         dependsOn buildApiBuilders
+        mustRunAfter buildCollectionFactory
+        mustRunAfter buildApiBuilders
     }
 }

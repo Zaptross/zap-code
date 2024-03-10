@@ -9,14 +9,22 @@ import io.javalin.http.Handler;
 
 import api.api.RequestHandler;
 import api.api.entities.JobRequest;
+import api.middleware.AuthMiddleware;
 import api.providers.jobs.JobProvider;
 
 public class PostRequestHandler implements RequestHandler {
   public final JobProvider jobProvider;
+  public final Handler authMiddleware;
 
   @Inject
-  public PostRequestHandler(JobProvider jobProvider) {
+  public PostRequestHandler(JobProvider jobProvider, AuthMiddleware authMiddleware) {
     this.jobProvider = jobProvider;
+    this.authMiddleware = authMiddleware;
+  }
+
+  @Override
+  public Handler[] before() {
+    return new Handler[] { authMiddleware };
   }
 
   @Override

@@ -77,6 +77,6 @@ public class App {
         api.solutionsIdApiBuilder().apply();
         api.tasksApiBuilder().apply();
         api.usersEmailApiBuilder().apply();
-        app.start(7070);
+        app.start();
     }
 }

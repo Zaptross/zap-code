@@ -1,10 +1,12 @@
 from os import getenv
 
 class MongoConfig:
-  host = ""
-  port = ""
-  user = ""
-  password = ""
+  def __init__(self):
+    self.user = ""
+    self.password = ""
+    self.database = ""
+    self.host = ""
+    self.port = ""
 
   def toConnectionString(self):
     return f"mongodb://{self.user}:{self.password}@{self.host}:{self.port}"
@@ -18,5 +20,7 @@ class MongoConfig:
     self.user = getenv(userKey) or getenv(userKey.lower())
     passwordKey = f"{group}_PASSWORD".upper()
     self.password = getenv(passwordKey) or getenv(passwordKey.lower())
+    databaseKey = f"{group}_DATABASE".upper()
+    self.database = getenv(databaseKey) or getenv(databaseKey.lower())
 
     return self

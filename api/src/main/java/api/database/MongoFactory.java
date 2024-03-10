@@ -21,8 +21,6 @@ import dagger.Provides;
 
 @Module
 public class MongoFactory {
-  private static String DATABASE = "zapcode"; // TODO - read from MongoConfig
-
   private CodecProvider pojoCodecProvider;
   private CodecRegistry pojoCodecRegistry;
   private MongoClient client;
@@ -39,7 +37,7 @@ public class MongoFactory {
   public MongoDatabase provideDatabase(MongoConfig config) {
     if (this.database == null) {
       this.client = MongoClients.create(config.ToConnectionString());
-      this.database = this.client.getDatabase(DATABASE).withCodecRegistry(pojoCodecRegistry);
+      this.database = this.client.getDatabase(config.Database).withCodecRegistry(pojoCodecRegistry);
     }
     return this.database;
   }

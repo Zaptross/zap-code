@@ -15,7 +15,7 @@ load_dotenv()
 mongoConfig = MongoConfig().fromEnvGroup("database")
 
 client = MongoClient(mongoConfig.toConnectionString())
-db = client.get_database("zapcode")
+db = client.get_database(mongoConfig.database)
 
 jp = DatabaseJobProvider(db)
 cl = ConsoleTransport()

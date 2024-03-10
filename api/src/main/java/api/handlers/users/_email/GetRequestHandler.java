@@ -1,4 +1,4 @@
-package api.handlers.users;
+package api.handlers.users._email;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import com.mongodb.client.MongoCollection;
 
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 
+import api.api.RequestHandler;
 import api.api.entities.ApiUser;
 import api.database.entities.User;
 import api.tasks.DaggerTasks;
 import api.tasks.Task;
 
-public class GetRequestHandler implements Handler {
+public class GetRequestHandler implements RequestHandler {
   public final Set<Task> tasks;
   public final MongoCollection<User> users;
 
@@ -30,7 +30,7 @@ public class GetRequestHandler implements Handler {
 
   @Override
   public void handle(@NotNull Context ctx) throws Exception {
-    var email = ctx.queryParam("email");
+    var email = ctx.pathParam("email");
 
     if (email == null) {
       ctx.status(400).result("No email provided.");

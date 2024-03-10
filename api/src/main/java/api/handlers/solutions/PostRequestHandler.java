@@ -7,10 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
+import api.api.RequestHandler;
 import api.api.entities.JobRequest;
 import api.providers.jobs.JobProvider;
 
-public class PostRequestHandler implements Handler {
+public class PostRequestHandler implements RequestHandler {
   public final JobProvider jobProvider;
 
   @Inject

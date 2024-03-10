@@ -8,10 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
+import api.api.RequestHandler;
 import api.api.entities.ApiJob;
 import api.providers.jobs.JobProvider;
 
-public class GetRequestHandler implements Handler {
+public class GetRequestHandler implements RequestHandler {
   private final JobProvider jobProvider;
 
   @Inject

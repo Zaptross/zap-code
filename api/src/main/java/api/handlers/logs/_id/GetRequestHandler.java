@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import com.mongodb.client.MongoCollection;
 
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 
+import api.api.RequestHandler;
 import api.api.entities.ApiLogs;
 import api.database.entities.Logs;
 
-public class GetRequestHandler implements Handler {
+public class GetRequestHandler implements RequestHandler {
   public final MongoCollection<Logs> logs;
 
   @Inject

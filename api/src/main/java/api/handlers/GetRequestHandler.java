@@ -5,9 +5,10 @@ import javax.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 
-public class GetRequestHandler implements Handler {
+import api.api.RequestHandler;
+
+public class GetRequestHandler implements RequestHandler {
   @Inject
   public GetRequestHandler() {
   }

@@ -8,12 +8,12 @@ import javax.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 
+import api.api.RequestHandler;
 import api.api.entities.ApiTask;
 import api.tasks.DaggerTasks;
 
-public class GetRequestHandler implements Handler {
+public class GetRequestHandler implements RequestHandler {
   public final Set<ApiTask> apiTasks;
 
   @Inject

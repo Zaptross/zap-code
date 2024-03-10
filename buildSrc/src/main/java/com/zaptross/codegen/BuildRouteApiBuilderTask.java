@@ -47,7 +47,6 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         e.printStackTrace();
       }
     }
-
   }
 
   private ArrayList<String> collectAllHandlerFilepaths(String handlerDirectory) {
@@ -162,7 +161,11 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
     var applies = new ArrayList<String>();
     for (var classPath : classPaths) {
       var fieldName = getFieldNameFromClassName(classPath.get(classPath.size() - 1));
+      applies.add(
+          String.format("    Stream.of(%s.before()).forEach(handler -> router.before(basePath, handler));", fieldName));
       applies.add(String.format("    router.%s(basePath, %s);", fieldName, fieldName));
+      applies.add(
+          String.format("    Stream.of(%s.after()).forEach(handler -> router.after(basePath, handler));", fieldName));
     }
     return String.join("\n", applies);
   }
@@ -232,6 +235,8 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         " * This file is generated. Do not directly modify this file.\n" +
         " */\n" +
         "package api.generated;\n" +
+        "\n" +
+        "import java.util.stream.Stream;" +
         "\n" +
         "import javax.inject.Inject;\n" +
         "\n" +

@@ -22,13 +22,30 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
-    implementation("io.javalin:javalin:6.1.0")
+
+    // Api
+    implementation("io.javalin:javalin:5.6.3")
+
+    // Using pac4j for authentication, versions are from the pac4j-javalin documentation as there's an issue with the latest version
+    // https://github.com/pac4j/javalin-pac4j/blob/master/README.md#1-add-the-required-dependencies-javalin-pac4j-and-pac4j--libraries
+    implementation( 'org.pac4j:javalin-pac4j:6.0.0')
+    runtimeOnly('org.pac4j:pac4j-core:5.7.1')
+    implementation('org.pac4j:pac4j-config:5.7.1')
+    implementation('org.pac4j:pac4j-oauth:5.7.1')
+
+    // MongoDB
     implementation("org.mongodb:mongodb-driver-sync:4.11.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
+
+    // Configuration
     implementation('io.github.cdimascio:dotenv-java:3.0.0')
-    implementation('com.google.dagger:dagger:2.51')
+
+    // Logger
     implementation('org.slf4j:slf4j-simple:2.0.10')
+
+    // Dependency injection
+    implementation('com.google.dagger:dagger:2.51')
     annotationProcessor('com.google.dagger:dagger-compiler:2.51')
 }
 

@@ -15,4 +15,8 @@ public class JavalinConfig {
         .FromEnv(env)
         .BuildWithPublicFields();
   }
+
+  public int getPort() {
+    return Integer.parseInt(port);
+  }
 }

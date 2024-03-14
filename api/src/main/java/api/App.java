@@ -58,6 +58,8 @@ public class App {
         UsersEmailApiBuilder usersEmailApiBuilder();
 
         Javalin javalin();
+
+        JavalinConfig config();
     }
 
     public String getGreeting() {
@@ -65,7 +67,6 @@ public class App {
     }
 
     public static void main(String[] args) {
-
         AppBuilder api = DaggerApp_AppBuilder
                 .builder()
                 .build();
@@ -77,6 +78,6 @@ public class App {
         api.solutionsIdApiBuilder().apply();
         api.tasksApiBuilder().apply();
         api.usersEmailApiBuilder().apply();
-        app.start();
+        app.start(api.config().getPort());
     }
 }

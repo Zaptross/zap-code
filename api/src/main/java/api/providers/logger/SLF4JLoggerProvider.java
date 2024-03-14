@@ -13,6 +13,7 @@ public class SLF4JLoggerProvider implements LoggerProvider {
   public SLF4JLoggerProvider() {
   }
 
+  @SuppressWarnings("rawtypes") // This is only used for logging and does not need to be strictly type safe
   public Logger getLogger(Class clazz) {
     return LoggerFactory.getLogger(clazz);
   }

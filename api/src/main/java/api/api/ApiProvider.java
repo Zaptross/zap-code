@@ -10,14 +10,11 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class ApiFactory {
+public class ApiProvider {
   @Inject
   @Singleton
   @Provides
   public Javalin createJavalin(JavalinConfig config) {
-    return Javalin.create(
-        app -> {
-          app.jetty.defaultPort = Integer.parseInt(config.port);
-        });
+    return Javalin.create();
   }
 }

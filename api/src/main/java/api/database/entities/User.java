@@ -6,6 +6,8 @@ import api.database.enums.AuthProvider;
 
 public class User {
   public ObjectId id;
-  public String email;
+  public String externalId;
   public AuthProvider authProvider;
+  public String username;
+  public String avatarUrl;
 }

@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from time import sleep
+from datetime import datetime
 
 from database.config import MongoConfig
 from database.job_status import JobStatus
@@ -21,13 +22,21 @@ jp = DatabaseJobProvider(db)
 cl = ConsoleTransport()
 logs = db.get_collection("logs")
 
+waitingForJobs = False
 while True:
   job = jp.next()
 
   if job is None:
-    cl.write("No jobs found, waiting for 5 seconds...")
-    sleep(5)
+    if not waitingForJobs:
+      cl.write("No jobs found, waiting...")
+      waitingForJobs = datetime.now()
+    sleep(1)
     continue
+
+  if waitingForJobs is not False:
+    waited = datetime.now() - waitingForJobs
+    cl.write(f"Waited {waited.seconds} seconds for a job")
+  waitingForJobs = False
 
   taskClass = get_task(job.task_id)
   if taskClass is None:

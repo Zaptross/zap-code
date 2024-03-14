@@ -1,8 +1,19 @@
 version: "3.9"
 services:
+  jobrunner:
+    image: zaptross/zapcode-jobrunner:latest
+    restart: unless-stopped
+    build:
+      context: ./jobrunner
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_HOST: "mongo"
+    env_file:
+      - .env
+
   mongo:
     image: mongo
-    restart: always
+    restart: unless-stopped
     ports:
       - "${DATABASE_PORT}:${DATABASE_PORT}"
     environment:
@@ -11,10 +22,8 @@ services:
 
   mongo-express:
     image: mongo-express
-    restart: always
+    restart: unless-stopped
     ports:
       - 8081:8081
     environment:
-      # ME_CONFIG_MONGODB_ADMINUSERNAME: ${DATABASE_USER}
-      # ME_CONFIG_MONGODB_ADMINPASSWORD: ${DATABASE_PASSWORD}
       ME_CONFIG_MONGODB_URL: mongodb://${DATABASE_USER}:${DATABASE_PASSWORD}@mongo:${DATABASE_PORT}/

@@ -86,6 +86,7 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         continue;
       }
 
+      // Handle root paths
       if (split.size() == 1) {
         for (var cpg : groups) {
           if (cpg.get(0).size() == 1) {
@@ -95,13 +96,18 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         }
       } else {
         var added = false;
+
+        // Check if the path is a method in an existing group
         for (var cpg : groups) {
-          if (split.size() == cpg.get(0).size() && split.get(0).equals(cpg.get(0).get(0))) {
+          var gp = String.join("/", cpg.get(0).subList(0, cpg.get(0).size() - 1));
+          var sp = String.join("/", split.subList(0, split.size() - 1));
+          if (split.size() == cpg.get(0).size() && gp.equals(sp)) {
             cpg.add(split);
             added = true;
           }
         }
 
+        // If no group was found, create a new one
         if (!added) {
           var classPath = new ArrayList<ArrayList<String>>();
           classPath.add(split);

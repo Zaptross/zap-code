@@ -18,19 +18,24 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
     var filePaths = collectAllHandlerFilepaths(fd);
     var classPathGroups = buildRouteGroupsFromFilepaths(filePaths);
 
+    var apiBuilderClasses = new ArrayList<String>();
+
     System.out.println(
         String.format("Generating ApiBuilders for %d route groups...", classPathGroups.size()));
     for (var cpg : classPathGroups) {
       var len = cpg.get(0).toArray().length;
       var fileName = buildFileName(cpg.get(0));
+      var className = buildClassName(cpg.get(0));
       var fileContent = buildFileTemplate(
-          buildClassName(cpg.get(0)),
+          className,
           buildImports(cpg),
           buildRoute(cpg.get(0)),
           buildClassFields(cpg),
           buildConstructorFields(cpg),
           buildFieldAssignments(cpg),
           buildApplies(cpg));
+
+      apiBuilderClasses.add(className);
 
       try {
         var newFile = new BufferedWriter(
@@ -46,6 +51,22 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
             fileName));
         e.printStackTrace();
       }
+    }
+
+    var applicatorFileName = "ApiBuildersApplicator";
+    System.out.println(String.format("Generating %s...", applicatorFileName));
+    try {
+      var newFile = new BufferedWriter(
+          new FileWriter(
+              System.getProperty("user.dir") + "/api/src/main/java/api/generated/" +
+                  applicatorFileName + ".java"));
+      newFile.write(buildApplicatorTemplate(apiBuilderClasses));
+      newFile.close();
+      System.out.println(String.format("%s", applicatorFileName));
+    } catch (Exception e) {
+      System.out.println(String.format("Failed to generate %s from buildSrc",
+          applicatorFileName));
+      e.printStackTrace();
     }
   }
 
@@ -208,7 +229,7 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
     var fields = new ArrayList<String>();
     for (var classPath : classPaths) {
       var className = classPath.get(classPath.size() - 1);
-      fields.add(String.format("    private final %s %s;", className, getFieldNameFromClassName(className)));
+      fields.add(String.format("  private final %s %s;", className, getFieldNameFromClassName(className)));
     }
     return String.join("\n", fields);
   }
@@ -233,6 +254,47 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
     return String.join("\n", imports);
   }
 
+  private String buildFieldName(String className) {
+    return className.substring(0, 1).toLowerCase() + className.substring(1);
+  }
+
+  private String buildApplicatorTemplate(ArrayList<String> classNames) {
+    var injects = String.join(",\n",
+        classNames.stream().map(cn -> String.format("      %sApiBuilder %sApiBuilder", cn, buildFieldName(cn)))
+            .toList());
+    var applies = String.join(",\n",
+        classNames.stream().map(cn -> String.format("        %sApiBuilder", buildFieldName(cn))).toList());
+    return String.format(
+        "package api.generated;\n" +
+            "\n" +
+            "import java.util.Set;\n" +
+            "\n" +
+            "import javax.inject.Inject;\n" +
+            "\n" +
+            "import io.javalin.Javalin;\n" +
+            "\n" +
+            "import api.api.ApiBuilderInterface;\n" +
+            "import dagger.Module;\n" +
+            "\n" +
+            "@Module\n" +
+            "public class ApiBuildersApplicator {\n" +
+            "  private final Set<ApiBuilderInterface> apiBuilders;\n" +
+            "\n" +
+            "  @Inject\n" +
+            "  public ApiBuildersApplicator(\n" +
+            "%s) {\n" +
+            "    this.apiBuilders = Set.of(\n" +
+            "%s);\n" +
+            "  }\n" +
+            "\n" +
+            "  public void applyAll(Javalin router) {\n" +
+            "    apiBuilders.forEach(builder -> builder.apply(router));\n" +
+            "  }\n" +
+            "}\n",
+        injects,
+        applies);
+  }
+
   private String buildFileTemplate(String className, String imports, String route, String classFields,
       String constructorFields, String fieldAssignments, String applies) {
     var nameLower = className.toLowerCase();
@@ -242,29 +304,37 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         " */\n" +
         "package api.generated;\n" +
         "\n" +
-        "import java.util.stream.Stream;" +
+        "import java.util.stream.Stream;\n" +
         "\n" +
         "import javax.inject.Inject;\n" +
         "\n" +
         "import io.javalin.Javalin;\n" +
         "\n" +
+        "import api.api.ApiBuilderInterface;\n" +
         "%s\n" + // imports eg: "import api.handlers.$nameLower.GetRequestHandler;"
         "import dagger.Module;\n" +
+        "import dagger.Provides;\n" +
+        "import dagger.multibindings.IntoSet;\n" +
         "\n" +
         "@Module\n" +
-        "public class %sApiBuilder {\n" +
-        "  private final Javalin router;\n" +
+        "public class %sApiBuilder implements ApiBuilderInterface {\n" +
         "  private final String basePath = \"%s\";\n" +
         "%s\n" +
         "\n" +
         "  @Inject\n" +
-        "  public %sApiBuilder(Javalin router, %s) {\n" +
-        "    this.router = router;\n" +
+        "  public %sApiBuilder(%s) {\n" +
         "%s\n" +
         "  }\n" +
         "\n" +
-        "  public void apply() {\n" +
+        "  @Override\n" +
+        "  public void apply(Javalin router) {\n" +
         "%s\n" +
+        "  }\n" +
+        "\n" +
+        "  @Provides\n" +
+        "  @IntoSet\n" +
+        "  public static ApiBuilderInterface provideApiBuilder(%sApiBuilder builder) {\n" +
+        "    return builder;\n" +
         "  }\n" +
         "}\n",
         imports,
@@ -274,6 +344,7 @@ public class BuildRouteApiBuilderTask extends DefaultTask {
         className,
         constructorFields,
         fieldAssignments,
-        applies);
+        applies,
+        className);
   }
 }

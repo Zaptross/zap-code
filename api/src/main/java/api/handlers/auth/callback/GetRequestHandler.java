@@ -22,9 +22,9 @@ import api.database.enums.AuthProvider;
 import api.providers.logger.LoggerProvider;
 
 public class GetRequestHandler implements RequestHandler {
-  public final Handler authMiddleware;
-  public final MongoCollection<User> userCollection;
-  public final Logger logger;
+  private final Handler authMiddleware;
+  private final MongoCollection<User> userCollection;
+  private final Logger logger;
 
   @Inject
   public GetRequestHandler(CallbackHandler authMiddleware,

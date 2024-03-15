@@ -25,10 +25,10 @@ import api.providers.logger.LoggerProvider;
 import api.utils.Utils;
 
 public class GetRequestHandler implements RequestHandler {
-  public final MongoCollection<Logs> logs;
-  public final Handler authMiddleware;
-  public final Handler userContextMiddleware;
-  public final Logger logger;
+  private final MongoCollection<Logs> logs;
+  private final Handler authMiddleware;
+  private final Handler userContextMiddleware;
+  private final Logger logger;
 
   @Inject
   public GetRequestHandler(MongoCollection<Logs> logs, SecurityHandler authMiddleware,

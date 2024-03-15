@@ -16,8 +16,8 @@ import api.providers.logger.LoggerProvider;
 import api.tasks.DaggerTasks;
 
 public class GetRequestHandler implements RequestHandler {
-  public final Set<ApiTask> apiTasks;
-  public final Logger logger;
+  private final Set<ApiTask> apiTasks;
+  private final Logger logger;
 
   @Inject
   public GetRequestHandler(LoggerProvider loggerProvider) {

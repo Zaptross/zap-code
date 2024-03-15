@@ -32,8 +32,8 @@ public class GetRequestHandler implements RequestHandler {
   private final Handler userContextMiddleware;
 
   private class Attempt {
-    public String id;
-    public String taskId;
+    public final String id;
+    public final String taskId;
 
     public Attempt(Job job) {
       this.id = job.id.toHexString();

@@ -10,7 +10,7 @@ import io.javalin.http.Handler;
 import api.api.RequestHandler;
 
 public class GetRequestHandler implements RequestHandler {
-  public final Handler authMiddleware;
+  private final Handler authMiddleware;
 
   @Inject
   public GetRequestHandler(LogoutHandler authMiddleware) {

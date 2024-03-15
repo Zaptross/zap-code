@@ -26,14 +26,14 @@ import api.providers.logger.LoggerProvider;
 import api.utils.Utils;
 
 public class GetRequestHandler implements RequestHandler {
-  public final MongoCollection<Logs> logs;
-  public final Handler authMiddleware;
+  private final MongoCollection<Logs> logs;
+  private final Handler authMiddleware;
   private final Handler userContextMiddleware;
-  public final Logger logger;
+  private final Logger logger;
 
   private class Log {
-    public String id;
-    public String taskId;
+    public final String id;
+    public final String taskId;
 
     public Log(Logs log) {
       this.id = log.id.toHexString();

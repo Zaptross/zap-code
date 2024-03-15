@@ -13,9 +13,9 @@ import api.middleware.UserContextMiddleware;
 import api.providers.logger.LoggerProvider;
 
 public class GetRequestHandler implements RequestHandler {
-  public final Handler authMiddleware;
-  public final Handler userContextMiddleware;
-  public final Logger logger;
+  private final Handler authMiddleware;
+  private final Handler userContextMiddleware;
+  private final Logger logger;
 
   @Inject
   public GetRequestHandler(SecurityHandler authMiddleware, UserContextMiddleware userContextMiddleware,

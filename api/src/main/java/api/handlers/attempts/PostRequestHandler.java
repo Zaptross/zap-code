@@ -17,10 +17,10 @@ import api.providers.jobs.JobProvider;
 import api.providers.logger.LoggerProvider;
 
 public class PostRequestHandler implements RequestHandler {
-  public final JobProvider jobProvider;
-  public final Handler authMiddleware;
-  public final Handler userContextMiddleware;
-  public final Logger logger;
+  private final JobProvider jobProvider;
+  private final Handler authMiddleware;
+  private final Handler userContextMiddleware;
+  private final Logger logger;
 
   @Inject
   public PostRequestHandler(JobProvider jobProvider, SecurityHandler authMiddleware,

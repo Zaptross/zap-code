@@ -2,23 +2,19 @@ package api;
 
 import javax.inject.Singleton;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
 import io.javalin.Javalin;
 
-import api.api.ApiFactory;
+import api.api.ApiProvider;
 import api.config.DotenvModule;
+import api.config.JavalinConfig;
+import api.config.OAuth2Config;
 import api.database.MongoFactory;
-import api.database.entities.User;
-// generated imports
+import api.generated.ApiBuildersApplicator;
 import api.generated.CollectionFactory;
-import api.generated.LogsIdApiBuilder;
-import api.generated.RootApiBuilder;
-import api.generated.SolutionsApiBuilder;
-import api.generated.SolutionsIdApiBuilder;
-import api.generated.TasksApiBuilder;
-import api.generated.UsersEmailApiBuilder;
+import api.providers.auth.AuthConfigProvider;
+import api.providers.auth.CallbackHandlerProvider;
+import api.providers.auth.LogoutHandlerProvider;
+import api.providers.auth.SecurityHandlerProvider;
 import api.providers.jobs.JobProviderModule;
 import api.providers.logger.LoggerProviderModule;
 import dagger.Component;
@@ -28,38 +24,24 @@ public class App {
     @Component(modules = {
             DotenvModule.class,
             MongoFactory.class,
-            ApiFactory.class,
+            ApiProvider.class,
             LoggerProviderModule.class,
+            AuthConfigProvider.class,
+            OAuth2Config.class,
+            SecurityHandlerProvider.class,
+            LogoutHandlerProvider.class,
+            CallbackHandlerProvider.class,
             JobProviderModule.class, // generated
             CollectionFactory.class, // generated
-            RootApiBuilder.class, // generated
-            LogsIdApiBuilder.class, // generated
-            SolutionsApiBuilder.class, // generated
-            SolutionsIdApiBuilder.class, // generated
-            TasksApiBuilder.class, // generated
-            UsersEmailApiBuilder.class, // generated
+            ApiBuildersApplicator.class // generated
     })
 
     public interface AppBuilder {
-        MongoDatabase database();
-
-        MongoCollection<User> userCollection();
-
-        RootApiBuilder rootApiBuilder();
-
-        LogsIdApiBuilder logsIdApiBuilder();
-
-        SolutionsApiBuilder solutionsApiBuilder();
-
-        SolutionsIdApiBuilder solutionsIdApiBuilder();
-
-        TasksApiBuilder tasksApiBuilder();
-
-        UsersEmailApiBuilder usersEmailApiBuilder();
-
         Javalin javalin();
 
         JavalinConfig config();
+
+        ApiBuildersApplicator apiBuildersApplicator();
     }
 
     public String getGreeting() {
@@ -72,12 +54,7 @@ public class App {
                 .build();
 
         var app = api.javalin();
-        api.rootApiBuilder().apply();
-        api.logsIdApiBuilder().apply();
-        api.solutionsApiBuilder().apply();
-        api.solutionsIdApiBuilder().apply();
-        api.tasksApiBuilder().apply();
-        api.usersEmailApiBuilder().apply();
+        api.apiBuildersApplicator().applyAll(app);
         app.start(api.config().getPort());
     }
 }

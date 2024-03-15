@@ -9,5 +9,5 @@ public interface JobProvider {
 
   public void CancelJob(ObjectId jobId);
 
-  public Job GetJob(ObjectId jobId);
+  public Job GetJob(ObjectId jobId, ObjectId userId);
 }

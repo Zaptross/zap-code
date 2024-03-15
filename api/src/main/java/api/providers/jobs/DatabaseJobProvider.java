@@ -1,10 +1,12 @@
 package api.providers.jobs;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 import javax.inject.Inject;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 
@@ -47,9 +49,9 @@ public class DatabaseJobProvider implements JobProvider {
   }
 
   @Override
-  public Job GetJob(ObjectId jobId) {
+  public Job GetJob(ObjectId jobId, ObjectId userId) {
     try {
-      var job = jobs.find(eq("_id", jobId)).first();
+      var job = jobs.find(getJobFilter(userId, jobId)).first();
 
       if (job == null || job.id == null) {
         return null;
@@ -60,5 +62,9 @@ public class DatabaseJobProvider implements JobProvider {
       logger.error("Failed to retrieve job by id.", e);
       return null;
     }
+  }
+
+  private Bson getJobFilter(ObjectId userId, ObjectId jobId) {
+    return and(eq("_id", jobId), eq("userId", userId));
   }
 }

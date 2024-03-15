@@ -2,9 +2,12 @@ package api.handlers.auth.callback;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.util.LinkedHashMap;
+
 import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
+import org.pac4j.core.profile.UserProfile;
 import org.pac4j.javalin.CallbackHandler;
 import org.slf4j.Logger;
 
@@ -24,7 +27,8 @@ public class GetRequestHandler implements RequestHandler {
   public final Logger logger;
 
   @Inject
-  public GetRequestHandler(CallbackHandler authMiddleware, LoggerProvider loggerProvider,
+  public GetRequestHandler(CallbackHandler authMiddleware,
+      LoggerProvider loggerProvider,
       MongoCollection<User> userCollection) {
     this.authMiddleware = authMiddleware;
     this.userCollection = userCollection;
@@ -69,5 +73,20 @@ public class GetRequestHandler implements RequestHandler {
     newUser.username = profile.getUsername();
     newUser.avatarUrl = profile.getAttribute("avatar_url").toString();
     userCollection.insertOne(newUser);
+  }
+
+  private UserProfile getUserProfileFromContext(Context ctx) {
+    var profileStore = ctx.sessionAttributeMap().get("pac4jUserProfiles");
+
+    if (profileStore instanceof LinkedHashMap) {
+      @SuppressWarnings("rawtypes") // We are correctly checking the result of the cast
+      var profile = ((LinkedHashMap) profileStore).get("GitHubClient");
+
+      if (profile instanceof UserProfile) {
+        return (UserProfile) profile;
+      }
+    }
+
+    return null;
   }
 }

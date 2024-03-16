@@ -1,5 +1,18 @@
 version: "3.9"
 services:
+  api:
+    image: zaptross/zapcode-api:latest
+    restart: unless-stopped
+    build:
+      context: . # needs access to both ./api and ./buildSrc
+      dockerfile: ./api/Dockerfile
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    environment:
+      DATABASE_HOST: "mongo"
+    env_file:
+      - .env
+
   jobrunner:
     image: zaptross/zapcode-jobrunner:latest
     restart: unless-stopped

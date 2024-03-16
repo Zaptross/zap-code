@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 repositories {
@@ -83,5 +84,14 @@ gradle.beforeProject {
         dependsOn buildApiBuilders
         mustRunAfter buildCollectionFactory
         mustRunAfter buildApiBuilders
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'api.App',
+                'Class-Path': '/libs/*.jar'
+        )
     }
 }

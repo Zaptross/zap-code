@@ -12,11 +12,7 @@ public class OAuth2Config {
   public String name;
   public String clientId;
   public String clientSecret;
-  public String discoveryUri;
   public String redirectUri;
-  public String tokenUri;
-  public String authUri;
-  public String scopes;
 
   private final Dotenv env;
 

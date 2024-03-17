@@ -5,7 +5,7 @@ WORKDIR /zapcode
 
 COPY . .
 
-RUN ./gradlew build
+RUN ./gradlew --no-daemon build
 
 # # # # # # # Runtime Stage # # # # # # # #
 FROM amazoncorretto:21.0.2-alpine3.19

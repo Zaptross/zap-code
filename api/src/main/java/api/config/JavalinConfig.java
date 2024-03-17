@@ -8,6 +8,8 @@ import api.env.EnvConfig;
 
 public class JavalinConfig {
   public String port;
+  public String cors;
+  public String webapp;
 
   @Inject
   public JavalinConfig(Dotenv env) {
@@ -18,5 +20,9 @@ public class JavalinConfig {
 
   public int getPort() {
     return Integer.parseInt(port);
+  }
+
+  public String[] getCors() {
+    return cors.split(",");
   }
 }

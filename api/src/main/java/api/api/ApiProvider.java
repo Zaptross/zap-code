@@ -15,6 +15,16 @@ public class ApiProvider {
   @Singleton
   @Provides
   public Javalin createJavalin(JavalinConfig config) {
-    return Javalin.create();
+    return Javalin.create(cfg -> {
+      cfg.plugins.enableCors(cors -> {
+        cors.add(corsCfg -> {
+          corsCfg.allowHost(config.webapp);
+          corsCfg.allowCredentials = true;
+          for (var origin : config.getCors()) {
+            corsCfg.allowHost(origin);
+          }
+        });
+      });
+    });
   }
 }

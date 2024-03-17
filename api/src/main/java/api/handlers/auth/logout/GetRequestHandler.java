@@ -8,13 +8,16 @@ import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
 import api.api.RequestHandler;
+import api.config.JavalinConfig;
 
 public class GetRequestHandler implements RequestHandler {
   private final Handler authMiddleware;
+  private final String webappUrl;
 
   @Inject
-  public GetRequestHandler(LogoutHandler authMiddleware) {
+  public GetRequestHandler(LogoutHandler authMiddleware, JavalinConfig config) {
     this.authMiddleware = authMiddleware;
+    this.webappUrl = config.webapp;
   }
 
   public Handler[] before() {
@@ -23,6 +26,6 @@ public class GetRequestHandler implements RequestHandler {
 
   @Override
   public void handle(Context ctx) throws Exception {
-    ctx.status(200).redirect("/");
+    ctx.status(200).redirect(webappUrl);
   }
 }

@@ -38,7 +38,7 @@ public class FizzBuzzTask implements Task {
     return "" +
         "# write your answer within the function below\n" +
         "def FizzBuzz(i: int) -> None:\n" +
-        "    print(\"Fizz\")" +
+        "    print(\"Fizz\")\n" +
         "    pass";
   }
 }

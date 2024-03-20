@@ -37,7 +37,7 @@ export default function QuadWindow({children}: WindowHostProps) {
         <Resizable enable={{right: true}} defaultSize={defaultSize}>
           {children[0]}
         </Resizable>
-        <FillCol>{children[1]}</FillCol>
+        <FillCol style={{width: "100%", height: "100%"}}>{children[1]}</FillCol>
       </ResizableRow>
       <FillRow>
         <Resizable enable={{right: true}} defaultSize={defaultSize}>

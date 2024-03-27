@@ -1,14 +1,9 @@
-import {useQuery} from "@tanstack/react-query";
+import {QueryClient, useQuery} from "@tanstack/react-query";
+import {UserProfile} from "../types/UserProfile";
 
-type UserProfile = {
-  id: string;
-  username: string;
-  avatarUrl: string;
-};
-
-export default function useFetchUserProfile() {
-  return () => {
-    const {isPending, data, error} = useQuery<UserProfile>({
+export default function useFetchUserProfile(client: QueryClient) {
+  const {isPending, data, error} = useQuery<UserProfile>(
+    {
       retry: false,
       queryKey: ["userProfile"],
       queryFn: async () => {
@@ -20,8 +15,9 @@ export default function useFetchUserProfile() {
         const data = await response.json();
         return data;
       },
-    });
+    },
+    client
+  );
 
-    return {isPending, data, error};
-  };
+  return {isPending, data, error};
 }

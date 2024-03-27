@@ -15,6 +15,12 @@ const FillCol = styled.div`
 const FillRow = styled(FillCol)`
   flex-direction: row;
   border-top: 1px solid #000000aa;
+  overflow-y: clip;
+
+  > div {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
 `;
 const ResizableRow = styled(Resizable)`
   display: flex;

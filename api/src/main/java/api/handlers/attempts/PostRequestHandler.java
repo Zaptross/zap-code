@@ -22,6 +22,15 @@ public class PostRequestHandler implements RequestHandler {
   private final Handler userContextMiddleware;
   private final Logger logger;
 
+  private class Response {
+    @SuppressWarnings("unused") // Used for JSON serialization
+    public String attemptId;
+
+    public Response(String attemptId) {
+      this.attemptId = attemptId;
+    }
+  }
+
   @Inject
   public PostRequestHandler(JobProvider jobProvider, SecurityHandler authMiddleware,
       UserContextMiddleware userContextMiddleware, LoggerProvider loggerProvider) {
@@ -58,7 +67,7 @@ public class PostRequestHandler implements RequestHandler {
       job.userId = user.id;
       jobProvider.SubmitJob(job);
 
-      ctx.status(201).result(job.id.toString());
+      ctx.status(201).json(new Response(job.id.toString()));
     } catch (Exception e) {
       logger.error("Failed to submit solution for task.", e);
       ctx.status(500).result("Something went wrong trying to process your request.");

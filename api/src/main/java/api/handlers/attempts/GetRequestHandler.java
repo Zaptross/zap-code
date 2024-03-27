@@ -31,13 +31,16 @@ public class GetRequestHandler implements RequestHandler {
   private final Handler authMiddleware;
   private final Handler userContextMiddleware;
 
+  @SuppressWarnings("unused")
   private class Attempt {
     public final String id;
     public final String taskId;
+    public final String solution;
 
     public Attempt(Job job) {
       this.id = job.id.toHexString();
       this.taskId = job.taskId.toHexString();
+      this.solution = job.solution;
     }
   }
 
